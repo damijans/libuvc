@@ -724,15 +724,17 @@ uvc_error_t uvc_get_device_list(
     if ( libusb_get_device_descriptor ( usb_dev, &desc ) != LIBUSB_SUCCESS )
       continue;
 
+    UVC_DEBUG("    product: %04x:%04x", desc.idVendor, desc.idProduct);
+
     for (interface_idx = 0;
-	 !got_interface && interface_idx < config->bNumInterfaces;
-	 ++interface_idx) {
+         !got_interface && interface_idx < config->bNumInterfaces;
+         ++interface_idx) {
       interface = &config->interface[interface_idx];
 
       for (altsetting_idx = 0;
-	   !got_interface && altsetting_idx < interface->num_altsetting;
-	   ++altsetting_idx) {
-	if_desc = &interface->altsetting[altsetting_idx];
+           !got_interface && altsetting_idx < interface->num_altsetting;
+           ++altsetting_idx) {
+        if_desc = &interface->altsetting[altsetting_idx];
 
         // Skip TIS cameras that definitely aren't UVC even though they might
         // look that way
@@ -743,18 +745,18 @@ uvc_error_t uvc_get_device_list(
         }
 
         // Special case for Imaging Source cameras
-	/* Video, Streaming */
+        /* Video, Streaming */
         if ( 0x199e == desc.idVendor && ( 0x8101 == desc.idProduct ||
             0x8102 == desc.idProduct ) &&
             if_desc->bInterfaceClass == 255 &&
             if_desc->bInterfaceSubClass == 2 ) {
-	  got_interface = 1;
-	}
+          got_interface = 1;
+        }
 
-	/* Video, Streaming */
-	if (if_desc->bInterfaceClass == 14 && if_desc->bInterfaceSubClass == 2) {
-	  got_interface = 1;
-	}
+        /* Video, Streaming */
+        if (if_desc->bInterfaceClass == 14 && if_desc->bInterfaceSubClass == 2) {
+          got_interface = 1;
+        }
       }
     }
 
